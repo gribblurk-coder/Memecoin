@@ -6,18 +6,75 @@
     <meta name="theme-color" content="#7c3aed">
     <title>MemeRunner Scout</title>
     <link rel="manifest" href="./manifest.json">
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
+    
+    <!-- Recharts for charts -->
+    <script src="https://unpkg.com/recharts@2.10.3/dist/Recharts.js"></script>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
-        body { margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        #root { min-height: 100vh; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: system-ui, -apple-system, sans-serif; 
+        }
+        #root { 
+            min-height: 100vh; 
+        }
+        /* Loading indicator */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #a78bfa;
+            font-size: 24px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <div class="loading">
+            <div>🚀 Loading MemeRunner Scout...</div>
+        </div>
+    </div>
+    
+    <!-- Load app.js LAST -->
     <script type="text/babel" src="./app.js"></script>
+    
+    <!-- Error handler -->
+    <script>
+        window.addEventListener('error', function(e) {
+            console.error('Error:', e.message);
+            document.getElementById('root').innerHTML = `
+                <div style="padding: 20px; color: red; font-family: monospace;">
+                    <h2>Error Loading App</h2>
+                    <p>${e.message}</p>
+                    <p>Check browser console (F12) for details</p>
+                </div>
+            `;
+        });
+        
+        // Check if React loaded
+        setTimeout(() => {
+            if (typeof React === 'undefined') {
+                document.getElementById('root').innerHTML = `
+                    <div style="padding: 20px; color: red;">
+                        <h2>React Failed to Load</h2>
+                        <p>Please check your internet connection and refresh</p>
+                    </div>
+                `;
+            }
+        }, 5000);
+    </script>
 </body>
 </html>
