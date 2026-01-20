@@ -1,7 +1,4 @@
-const Recharts = window.Recharts || {};
-const { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } = Recharts;
 const { useState, useEffect, useRef } = React;
-const { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } = Recharts;
 
 // Icon components using emojis
 const TrendingUp = ({ className }) => <span className={className}>📈</span>;
@@ -27,6 +24,36 @@ const HISTORICAL_RUNNERS = [
   { name: 'FARTCOIN', mint: '9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump', earlyMC: 52000, rapidGrowth: 31, hasSocials: true, creatorHold: 7 },
   { name: 'ACT', mint: 'GJAFwWjJ3vnTsrQVabjBVK2TYB1YtRCQXRDfDgUnpump', earlyMC: 41000, rapidGrowth: 48, hasSocials: true, creatorHold: 5 }
 ];
+
+// Simple Sparkline component (replaces Recharts)
+const SimpleSparkline = ({ data }) => {
+  if (!data || data.length < 2) return <div className="text-gray-500 text-sm">No data yet</div>;
+  
+  const values = data.map(d => d.mc);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+  
+  const points = values.map((val, i) => {
+    const x = (i / (values.length - 1)) * 100;
+    const y = 100 - ((val - min) / range) * 100;
+    return `${x},${y}`;
+  }).join(' ');
+  
+  const isPositive = values[values.length - 1] >= values[0];
+  
+  return (
+    <svg viewBox="0 0 100 100" className="w-full h-full" preserveAspectRatio="none">
+      <polyline
+        points={points}
+        fill="none"
+        stroke={isPositive ? '#4ade80' : '#f87171'}
+        strokeWidth="2"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+  );
+};
 
 const MemeRunnerScout = () => {
   const [connected, setConnected] = useState(false);
@@ -494,107 +521,14 @@ const WatchlistCard = ({ token, onChange, onRemove, onView }) => (
         <div className="font-semibold">${(token.currentMC / 1000).toFixed(1)}k</div>
       </div>
       <div>
-        <div className="text-gray-400 text-xs">Change</div>
-        <div className={`font-semibold ${parseFloat(onChange) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-          {parseFloat(onChange) >= 0 ? '+' : ''}{onChange}%
-        </div>
-      </div>
-    </div>
-    
-    <div className="h-20 mb-3">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={token.history}>
-          <XAxis dataKey="time" hide />
-          <YAxis hide domain={['auto', 'auto']} />
-          <Tooltip 
-            contentStyle={{ backgroundColor: '#1a1a2e', border: '1px solid #7c3aed' }}
-            formatter={(value) => [`$${(value / 1000).toFixed(1)}k`, 'MC']}
-          />
-          <Line type="monotone" dataKey="mc" stroke="#a78bfa" strokeWidth={2} dot={false} />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-    
-    <div className="flex gap-2">
-      <a href={`https://pump.fun/${token.mint}`} target="_blank" rel="noopener noreferrer" 
-         className="flex-1 text-center py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm transition">
-        pump.fun <ExternalLink className="inline" />
-      </a>
-      <a href={`https://dexscreener.com/solana/${token.mint}`} target="_blank" rel="noopener noreferrer"
-         className="flex-1 text-center py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm transition">
-        DexScreener <ExternalLink className="inline" />
-      </a>
-    </div>
+        <div className="inline" />
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
   </div>
 );
-
-const TokenDetailModal = ({ token, onClose }) => (
-  <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
-    <div className="bg-gray-900 border border-purple-500/30 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-      <div className="p-6">
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold mb-1">{token.name}</h2>
-            <span className="text-gray-400">${token.ticker}</span>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-lg transition">
-            <X />
-          </button>
-        </div>
-        
-        <div className="space-y-4">
-          <div className="bg-white/5 rounded-lg p-4">
-            <h3 className="font-semibold mb-3">Score Breakdown</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Overall Score</span>
-                <span className="font-semibold text-purple-400">{token.score}/100</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Rapid Growth</span>
-                <span>{token.rapidGrowth}% in 10min</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Social Signals</span>
-                <span>{token.hasSocials ? '✓ Present' : '✗ Missing'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Market Cap Range</span>
-                <span>${(token.initialMC / 1000).toFixed(1)}k</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white/5 rounded-lg p-4">
-            <h3 className="font-semibold mb-3">Similar Historical Runners</h3>
-            <div className="space-y-2 text-sm">
-              {HISTORICAL_RUNNERS.slice(0, 3).map(runner => (
-                <div key={runner.mint} className="flex justify-between items-center">
-                  <span className="text-purple-400">{runner.name}</span>
-                  <span className="text-gray-400">Early MC: ${(runner.earlyMC / 1000).toFixed(1)}k</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <div className="bg-white/5 rounded-lg p-4">
-            <h3 className="font-semibold mb-3">Links</h3>
-            <div className="space-y-2">
-              <a href={`https://pump.fun/${token.mint}`} target="_blank" rel="noopener noreferrer"
-                 className="block py-2 px-4 bg-purple-600 hover:bg-purple-700 rounded-lg text-center transition">
-                View on pump.fun <ExternalLink className="inline" />
-              </a>
-              <a href={`https://dexscreener.com/solana/${token.mint}`} target="_blank" rel="noopener noreferrer"
-                 className="block py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-center transition">
-                View on DexScreener <ExternalLink className="inline" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<MemeRunnerScout />);
