@@ -5,19 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#7c3aed">
     <title>MemeRunner Scout</title>
+
     <link rel="manifest" href="./manifest.json">
+
+    <!-- React -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Babel (for JSX in .js) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        body { margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        #root { min-height: 100vh; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        #root {
+            min-height: 100vh;
+        }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <div style="
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #a78bfa;
+            font-size: 24px;
+            text-align: center;
+        ">
+            🚀 Loading MemeRunner Scout...
+        </div>
+    </div>
+
+    <!-- Your app -->
     <script type="text/babel" src="./app.js"></script>
 </body>
 </html>
