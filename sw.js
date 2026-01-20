@@ -2,36 +2,29 @@ const CACHE_NAME = 'memerunner-v1';
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll([
+    caches.open(CACHE_NAME).then(cache =>
+      cache.addAll([
         './',
         './index.html',
         './app.js',
         './manifest.json'
-      ]).catch(err => console.log('Cache error:', err));
-    })
+      ])
+    )
   );
   self.skipWaiting();
 });
 
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
-      .catch(() => caches.match('./index.html'))
+    caches.match(event.request).then(res => res || fetch(event.request))
   );
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys().then(names =>
+      Promise.all(names.filter(n => n !== CACHE_NAME).map(n => caches.delete(n)))
+    )
   );
 });
+
