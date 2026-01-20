@@ -1,3 +1,5 @@
+const Recharts = window.Recharts || {};
+const { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } = Recharts;
 const { useState, useEffect, useRef } = React;
 const { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } = Recharts;
 
